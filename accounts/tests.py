@@ -1,45 +1,218 @@
+from django.contrib.auth import SESSION_KEY, get_user_model
 from django.test import TestCase
+from django.urls import reverse
+
+User = get_user_model()
 
 
 class TestSignUpView(TestCase):
+    def setUp(self):
+        self.url = reverse("accounts:signup")
+
     def test_success_get(self):
-        pass
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/signup.html")
 
     def test_success_post(self):
-        pass
+        valid_data = {
+            "username": "testuser",
+            "email": "test@test.com",
+            "password1": "testpassword",
+            "password2": "testpassword",
+        }
+        response = self.client.post(self.url, valid_data)
+
+        self.assertRedirects(
+            response,
+            reverse("tweets:home"),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
+        self.assertIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_empty_form(self):
-        pass
+        data = {
+            "username": "",
+            "email": "",
+            "password1": "",
+            "password2": "",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            User.objects.filter(username=data["username"], email=data["email"]).exists()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["username"], ["This field is required."])
+        self.assertEqual(form.errors["email"], ["This field is required."])
+        self.assertEqual(form.errors["password1"], ["This field is required."])
+        self.assertEqual(form.errors["password2"], ["This field is required."])
 
     def test_failure_post_with_empty_username(self):
-        pass
+        data = {
+            "username": "",
+            "email": "tests2@icloud.com",
+            "password1": "QAz105edc",
+            "password2": "QAz105edc",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["username"], ["This field is required."])
 
     def test_failure_post_with_empty_email(self):
-        pass
+        data = {
+            "username": "suzuki",
+            "email": "",
+            "password1": "QAZ105edc",
+            "password2": "QAZ105edc",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["email"], ["This field is required."])
 
     def test_failure_post_with_empty_password(self):
-        pass
+        data = {
+            "username": "takahashi",
+            "email": "tests3@icloud.com",
+            "password1": "",
+            "password2": "",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["password1"], ["This field is required."])
+        self.assertEqual(form.errors["password2"], ["This field is required."])
 
     def test_failure_post_with_duplicated_user(self):
-        pass
+        data = {
+            "username": "yamada",
+            "email": "tests4@icloud.com",
+            "password1": "QaZ105edc",
+            "password2": "QaZ105edc",
+        }
+
+        User.objects.create_user(
+            username="yamada",
+            email="tests4@icloud.com",
+            password="QaZ105edc",
+        )
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["username"], ["A user with that username already exists."]
+        )
 
     def test_failure_post_with_invalid_email(self):
-        pass
+        data = {
+            "username": "ashizawa",
+            "email": "tests5icloud.com",
+            "password1": "Qaz105Edc",
+            "password2": "Qaz105Edc",
+        }
+        User.objects.create_user(
+            username="ashizawa",
+            email="tests5icloud.com",
+            password="Qaz105Edc",
+        )
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["email"], ["Enter a valid email address."])
 
     def test_failure_post_with_too_short_password(self):
-        pass
+        data = {
+            "username": "yamamoto",
+            "email": "tests6@icloud.com",
+            "password1": "a1B",
+            "password2": "a1B",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password2"],
+            ["This password is too short. It must contain at least 8 characters."],
+        )
 
     def test_failure_post_with_password_similar_to_username(self):
-        pass
+        data = {
+            "username": "takedabc",
+            "email": "tests7@icloud.com",
+            "password1": "takedabc",
+            "password2": "takedabc",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password2"], ["The password is too similar to the username."]
+        )
 
     def test_failure_post_with_only_numbers_password(self):
-        pass
+        data = {
+            "username": "saito",
+            "email": "tests8@icloud.com",
+            "password1": "12481632",
+            "password2": "12481632",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password2"], ["This password is entirely numeric."]
+        )
 
     def test_failure_post_with_mismatch_password(self):
-        pass
+        data = {
+            "username": "sakurai",
+            "email": "tests9@icloud.com",
+            "password1": "Qaz105edc",
+            "password2": "Qaz105eee",
+        }
+        response = self.client.post(self.url, data)
+        form = response.context["form"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username=data["username"]).exists())
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["password2"], ["The two password fields didn’t match."]
+        )
 
 
 class TestHomeView(TestCase):
+    def setUp(self):
+        pass
+
     def test_success_get(self):
         pass
 
