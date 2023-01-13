@@ -211,10 +211,11 @@ class TestSignUpView(TestCase):
 
 class TestHomeView(TestCase):
     def setUp(self):
-        pass
+        self.url = reverse("tweets:home")
 
     def test_success_get(self):
-        pass
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestLoginView(TestCase):
