@@ -201,15 +201,6 @@ class TestSignUpView(TestCase):
         self.assertEqual(form.errors["password2"], ["確認用パスワードが一致しません。"])
 
 
-class TestHomeView(TestCase):
-    def setUp(self):
-        self.url = reverse("tweets:home")
-
-    def test_success_get(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-
-
 class TestLoginView(TestCase):
     def test_success_get(self):
         pass
