@@ -7,7 +7,5 @@ class CustomUserAdmin(UserAdmin):
     pass
 
 
-CustomUser = get_user_model()
-admin.site.register(CustomUser, CustomUserAdmin)
-
-# Register your models here.
+User = get_user_model()
+admin.site.register(User)
