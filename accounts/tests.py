@@ -202,17 +202,57 @@ class TestSignUpView(TestCase):
 
 
 class TestLoginView(TestCase):
+    def setUp(self):
+        self.url = reverse("accounts:login")
+        self.user = User.objects.create_user(
+            username="testuser", email="test@email.com", password="testpassword"
+        )
+
     def test_success_get(self):
-        pass
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_success_post(self):
-        pass
+        data = {
+            "username": "testuser",
+            "password": "testpassword",
+        }
+        response = self.client.post(self.url, data)
+        self.assertRedirects(
+            response,
+            reverse("tweets:home"),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_not_exists_user(self):
-        pass
+        not_exist_user_data = {
+            "username": "fakeuser",
+            "password": "fakepassward",
+        }
+        response = self.client.post(self.url, not_exist_user_data)
+        self.assertEqual(response.status_code, 200)
+        form = response.context["form"]
+        self.assertFalse(form.is_valid())
+        self.assertEqual(
+            form.errors["__all__"][0],
+            "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
+        )
+        self.assertNotIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_empty_password(self):
-        pass
+        password_empty_user_data = {
+            "username": "testuser",
+            "password": "",
+        }
+        response = self.client.post(self.url, password_empty_user_data)
+        self.assertEqual(response.status_code, 200)
+        form = response.context["form"]
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors["password"], ["このフィールドは必須です。"])
+        self.assertNotIn(SESSION_KEY, self.client.session)
 
 
 class TestLogoutView(TestCase):
