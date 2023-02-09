@@ -216,9 +216,10 @@ class TestLoginView(TestCase):
     def test_success_post(self):
         data = {
             "username": "testuser",
-            "password": "testpassword",
+            "password": "testpassword0",
         }
         response = self.client.post(self.url, data)
+        print(response.content.decode())
         self.assertRedirects(
             response,
             reverse("tweets:home"),
