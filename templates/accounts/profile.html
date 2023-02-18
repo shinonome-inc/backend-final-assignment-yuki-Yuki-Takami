@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="card card-profile my-5 mx-auto">
+  <div class="card-body">
+    <h5 class="card-title text-center">プロフィール</h5>
+    <table class="profile_table mb-4">
+      <h3>名前</h3>
+      {{user.username}}<br>
+      <h3>メールアドレス</h3>
+      {{user.email}}
+  </div>
+</div>
+
+{% endblock %}
