@@ -5,9 +5,7 @@
     <h5 class="card-title text-center">プロフィール</h5>
     <table class="profile_table mb-4">
       <h3>名前</h3>
-      {{user.username}}<br>
-      <h3>メールアドレス</h3>
-      {{user.email}}
+      <a href="{% url 'accounts:user_profile' object.username %}">{{object.username}}</a><br>
   </div>
 </div>
 

@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login
 from django.views import generic
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -26,5 +25,7 @@ class SignUpView(CreateView):
 
 
 class UserProfileView(LoginRequiredMixin, generic.DetailView):
-    def get(self, request, *args, **kwargs):
-        return render(request, "accounts/profile.html")
+    model = User
+    template_name = "accounts/profile.html"
+    slug_field = "username"
+    slug_url_kwarg = "username"
