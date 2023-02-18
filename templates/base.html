@@ -9,6 +9,10 @@
 </head>
 
 <body>
+  {% if request.user.is_authenticated %}
+  [{{ request.user.username }}]
+  <a href={% url "accounts:logout" %}>ログアウト</a>
+  {% endif %}
   {% block content %}
   {% endblock %}
 </body>
