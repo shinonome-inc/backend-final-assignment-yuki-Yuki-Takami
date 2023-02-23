@@ -5,6 +5,8 @@ from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 
+from tweets.models import Tweet
+
 from .forms import SignUpForm
 
 User = get_user_model()
@@ -29,3 +31,9 @@ class UserProfileView(LoginRequiredMixin, generic.DetailView):
     template_name = "accounts/profile.html"
     slug_field = "username"
     slug_url_kwarg = "username"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.object
+        context["tweet_list"] = Tweet.objects.select_related("user").filter(user=user)
+        return context
