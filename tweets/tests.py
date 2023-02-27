@@ -50,6 +50,7 @@ class TestTweetCreateView(TestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertEqual(form.errors["content"], ["このフィールドは必須です。"])
+        self.assertFalse(Tweet.objects.exists())
 
     def test_failure_post_with_too_long_content(self):
         long_data = {"content": "a" * 500}

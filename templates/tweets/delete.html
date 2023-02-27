@@ -4,8 +4,6 @@
 <form method="post">{% csrf_token %}
   <p>投稿者 : {{ tweet.user }}</p>
   <p>内容 : {{ tweet.content }}</p>
-  {% if tweet.user == request.user %}
-  {% endif %}
   <p>この投稿を削除しますか?</p>
   <input type="submit" value="削除する">
   <a href="{% url 'tweets:detail' tweet.pk %}">キャンセル</a>
