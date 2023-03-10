@@ -12,6 +12,7 @@ class HomeView(LoginRequiredMixin, ListView):
     template_name = "tweets/home.html"
     ordering = "created_at"
     context_object_name = "tweet_list"
+    queryset = Tweet.objects.select_related("user").all()
 
 
 class TweetCreateView(LoginRequiredMixin, CreateView):

@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from .models import Tweet
+from django.test.utils import override_settings
 
 User = get_user_model()
 
@@ -16,9 +17,16 @@ class TestHomeView(TestCase):
         )
         self.client.login(username="testuser", password="testpassword")
 
+    @override_settings(DEBUG=True)
     def test_success_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "tweets/home.html")
+        self.assertQuerysetEqual(
+            response.context["tweet_list"],
+            Tweet.objects.order_by("-created_at"),
+            ordered=False,
+        )
 
 
 class TestTweetCreateView(TestCase):
