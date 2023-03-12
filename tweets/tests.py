@@ -17,7 +17,6 @@ class TestHomeView(TestCase):
         )
         self.client.login(username="testuser", password="testpassword")
 
-    @override_settings(DEBUG=True)
     def test_success_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
