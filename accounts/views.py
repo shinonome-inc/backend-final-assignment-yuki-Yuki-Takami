@@ -1,14 +1,14 @@
-from django.contrib.auth import authenticate, login, get_user_model
-from django.views import generic
+from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.http import HttpResponseBadRequest
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import FriendShip
+from django.views import generic
 
 from tweets.models import Tweet
 
 from .forms import SignUpForm
+from .models import FriendShip
 
 User = get_user_model()
 
