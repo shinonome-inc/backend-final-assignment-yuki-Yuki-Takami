@@ -1,10 +1,10 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.views import generic
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user_model
+from .models import FriendShip
 
 from tweets.models import Tweet
 
@@ -37,6 +37,11 @@ class UserProfileView(LoginRequiredMixin, generic.DetailView):
         context = super().get_context_data(**kwargs)
         user = self.object
         context["tweet_list"] = Tweet.objects.select_related("user").filter(user=user)
+        context["is_following"] = FriendShip.objects.filter(
+            follower=self.request.user, following=user
+        )
+        context["following"] = FriendShip.objects.filter(follower=user).count()
+        context["follower"] = FriendShip.objects.filter(following=user).count()
         return context
 
 
@@ -45,10 +50,11 @@ class FollowView(LoginRequiredMixin, generic.RedirectView):
     http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
+        follower = self.request.user
         if self.kwargs["username"] == request.user.username:
-            return HttpResponseBadRequest("自分自身をフォローすることはできません。")
-        user = get_object_or_404(User, username=self.kwargs["username"])
-        request.user.following.add(user)
+            return HttpResponseBadRequest("自分をフォローすることはできません。")
+        following = get_object_or_404(User, username=self.kwargs["username"])
+        FriendShip.objects.create(follower=follower, following=following)
         return super().post(request, *args, **kwargs)
 
 
@@ -57,38 +63,35 @@ class UnFollowView(LoginRequiredMixin, generic.RedirectView):
     http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
+        follower = self.request.user
         if self.kwargs["username"] == request.user.username:
-            return HttpResponseBadRequest("自分自身にリクエストできません。")
-        user = get_object_or_404(User, username=self.kwargs["username"])
-        request.user.following.remove(user)
+            return HttpResponseBadRequest("自分にリクエストできません。")
+        following = get_object_or_404(User, username=self.kwargs["username"])
+        FriendShip.objects.filter(follower=follower, following=following).delete()
         return super().post(request, *args, **kwargs)
 
 
 class FollowingListView(LoginRequiredMixin, generic.ListView):
     model = User
     template_name = "accounts/following_list.html"
-    paginate_by = 10
-
-    def get_queryset(self):
-        self.user = User.objects.get(username=self.kwargs["username"])
-        return self.user.following.all().order_by("-following_id")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user"] = self.user
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        context["following_list"] = FriendShip.objects.select_related(
+            "following"
+        ).filter(follower=user)
         return context
 
 
 class FollowerListView(LoginRequiredMixin, generic.ListView):
     model = User
-    template_name = "views/follower_list.html"
-    paginate_by = 10
-
-    def get_queryset(self):
-        self.user = User.objects.get(username=self.kwargs["username"])
-        return self.user.followed_by.all().order_by("-last_login")
+    template_name = "accounts/follower_list.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["user"] = self.user
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        context["follower_list"] = FriendShip.objects.select_related("follower").filter(
+            following=user
+        )
         return context

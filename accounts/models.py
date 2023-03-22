@@ -8,9 +8,8 @@ class User(AbstractUser):
 
 class FriendShip(models.Model):
     follower = models.ForeignKey(
-        User, related_name="follower", on_delete=models.CASCADE
+        User, on_delete=models.CASCADE, related_name="follower"
     )
     following = models.ForeignKey(
-        User, related_name="following", on_delete=models.CASCADE
+        User, on_delete=models.CASCADE, related_name="following"
     )
-    date_created = models.DateTimeField(auto_now_add=True)
