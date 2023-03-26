@@ -49,9 +49,11 @@ class FollowView(LoginRequiredMixin, generic.RedirectView):
 
     def post(self, request, *args, **kwargs):
         follower = self.request.user
+        following = get_object_or_404(User, username=self.kwargs["username"])
         if self.kwargs["username"] == request.user.username:
             return HttpResponseBadRequest("自分をフォローすることはできません。")
-        following = get_object_or_404(User, username=self.kwargs["username"])
+        if FriendShip.objects.filter(following=following, follower=follower).exists():
+            return HttpResponseBadRequest("すでにフォローしています。")
         FriendShip.objects.create(follower=follower, following=following)
         return super().post(request, *args, **kwargs)
 
@@ -77,7 +79,7 @@ class FollowingListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         context["following_list"] = (
-            FriendShip.objects.select_related("following").filter(follower=user).order_by("-following")
+            FriendShip.objects.select_related("following").filter(follower=user).order_by("-following_id")
         )
         return context
 
@@ -90,6 +92,6 @@ class FollowerListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         context["follower_list"] = (
-            FriendShip.objects.select_related("follower").filter(following=user).order_by("-follower")
+            FriendShip.objects.select_related("follower").filter(following=user).order_by("-follower_id")
         )
         return context
