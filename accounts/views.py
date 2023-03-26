@@ -79,7 +79,7 @@ class FollowingListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         context["following_list"] = (
-            FriendShip.objects.select_related("following").filter(follower=user).order_by("-following_id")
+            FriendShip.objects.select_related("following").filter(follower=user).order_by("-created_at")
         )
         return context
 
@@ -92,6 +92,6 @@ class FollowerListView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         context["follower_list"] = (
-            FriendShip.objects.select_related("follower").filter(following=user).order_by("-follower_id")
+            FriendShip.objects.select_related("follower").filter(following=user).order_by("-created_at")
         )
         return context
