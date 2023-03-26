@@ -72,7 +72,7 @@ class UnFollowView(LoginRequiredMixin, generic.RedirectView):
 
 
 class FollowingListView(LoginRequiredMixin, generic.ListView):
-    model = User
+    model = FriendShip
     template_name = "accounts/following_list.html"
 
     def get_context_data(self, **kwargs):
@@ -85,7 +85,7 @@ class FollowingListView(LoginRequiredMixin, generic.ListView):
 
 
 class FollowerListView(LoginRequiredMixin, generic.ListView):
-    model = User
+    model = FriendShip
     template_name = "accounts/follower_list.html"
 
     def get_context_data(self, **kwargs):
