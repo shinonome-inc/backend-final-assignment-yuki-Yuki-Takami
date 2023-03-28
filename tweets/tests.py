@@ -1,8 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+
 from .models import Tweet
-from django.test.utils import override_settings
 
 User = get_user_model()
 
@@ -31,9 +31,7 @@ class TestHomeView(TestCase):
 class TestTweetCreateView(TestCase):
     def setUp(self):
         self.url = reverse("tweets:create")
-        self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
-        )
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
         self.client.login(username="testuser", password="testpassword")
 
     def test_success_get(self):
@@ -64,9 +62,7 @@ class TestTweetCreateView(TestCase):
         response = self.client.post(self.url, long_data)
         self.assertEquals(response.status_code, 200)
         form = response.context["form"]
-        self.assertEqual(
-            form.errors["content"], ["この値は 200 文字以下でなければなりません( 500 文字になっています)。"]
-        )
+        self.assertEqual(form.errors["content"], ["この値は 200 文字以下でなければなりません( 500 文字になっています)。"])
         self.assertFalse(Tweet.objects.exists())
 
 
@@ -81,9 +77,7 @@ class TestTweetDetailView(TestCase):
         self.tweet = Tweet.objects.create(user=self.user, content="test_tweet")
 
     def test_success_get(self):
-        response = self.client.get(
-            reverse("tweets:detail", kwargs={"pk": self.tweet.pk})
-        )
+        response = self.client.get(reverse("tweets:detail", kwargs={"pk": self.tweet.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["tweet"], self.tweet)
 
@@ -120,9 +114,7 @@ class TestTweetDeleteView(TestCase):
         self.assertEqual(Tweet.objects.count(), 2)
 
     def test_failure_post_with_incorrect_user(self):
-        response = self.client.post(
-            reverse("tweets:delete", kwargs={"pk": self.tweet2.pk})
-        )
+        response = self.client.post(reverse("tweets:delete", kwargs={"pk": self.tweet2.pk}))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Tweet.objects.count(), 2)
 
