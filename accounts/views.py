@@ -74,24 +74,18 @@ class UnFollowView(LoginRequiredMixin, generic.RedirectView):
 class FollowingListView(LoginRequiredMixin, generic.ListView):
     model = FriendShip
     template_name = "accounts/following_list.html"
+    context_object_name = "following"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs["username"])
-        context["following_list"] = (
-            FriendShip.objects.select_related("following").filter(follower=user).order_by("-created_at")
-        )
-        return context
+        return FriendShip.objects.select_related("following").filter(follower=user).order_by("-created_at")
 
 
 class FollowerListView(LoginRequiredMixin, generic.ListView):
     model = FriendShip
     template_name = "accounts/follower_list.html"
+    context_object_name = "follower"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs["username"])
-        context["follower_list"] = (
-            FriendShip.objects.select_related("follower").filter(following=user).order_by("-created_at")
-        )
-        return context
+        return FriendShip.objects.select_related("follower").filter(follower=user).order_by("-created_at")
