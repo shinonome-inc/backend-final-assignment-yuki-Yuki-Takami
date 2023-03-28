@@ -74,7 +74,7 @@ class UnFollowView(LoginRequiredMixin, generic.RedirectView):
 class FollowingListView(LoginRequiredMixin, generic.ListView):
     model = FriendShip
     template_name = "accounts/following_list.html"
-    context_object_name = "following"
+    context_object_name = "following_list"
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs["username"])
@@ -84,7 +84,7 @@ class FollowingListView(LoginRequiredMixin, generic.ListView):
 class FollowerListView(LoginRequiredMixin, generic.ListView):
     model = FriendShip
     template_name = "accounts/follower_list.html"
-    context_object_name = "follower"
+    context_object_name = "follower_list"
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs["username"])
