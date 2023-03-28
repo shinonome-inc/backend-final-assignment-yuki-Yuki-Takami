@@ -3,9 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Twitter Clone{% endblock %}</title>
+  <title>WELCOME</title>
 </head>
 
 <body>
@@ -13,11 +11,13 @@
   [{{ request.user.username }}]
   <a href={% url "accounts:signup" %}>サインアップ</a>
   <a href={% url "accounts:login" %}>ログイン</a>
-  <a href={% url "accounts:logout" %}>ログアウト</a>
-  <a href={% url "tweets:home" %}>ホーム画面</a>
   {% endif %}
   {% block content %}
   {% endblock %}
+</body>
+
+<body>
+  <h1>Backend Final Assignment</h1>
 </body>
 
 </html>

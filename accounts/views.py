@@ -49,9 +49,9 @@ class FollowView(LoginRequiredMixin, generic.RedirectView):
 
     def post(self, request, *args, **kwargs):
         follower = self.request.user
-        following = get_object_or_404(User, username=self.kwargs["username"])
         if self.kwargs["username"] == request.user.username:
             return HttpResponseBadRequest("自分をフォローすることはできません。")
+        following = get_object_or_404(User, username=self.kwargs["username"])
         if FriendShip.objects.filter(following=following, follower=follower).exists():
             return HttpResponseBadRequest("すでにフォローしています。")
         FriendShip.objects.create(follower=follower, following=following)
