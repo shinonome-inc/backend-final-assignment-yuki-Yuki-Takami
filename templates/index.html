@@ -6,15 +6,7 @@
   <title>WELCOME</title>
 </head>
 
-<body>
-  {% if request.user.is_authenticated %}
-  [{{ request.user.username }}]
-  <a href={% url "accounts:signup" %}>サインアップ</a>
-  <a href={% url "accounts:login" %}>ログイン</a>
-  {% endif %}
-  {% block content %}
-  {% endblock %}
-</body>
+{% extends "base.html" %}
 
 <body>
   <h1>Backend Final Assignment</h1>

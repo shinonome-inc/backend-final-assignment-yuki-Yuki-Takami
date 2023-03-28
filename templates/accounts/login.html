@@ -4,10 +4,6 @@
 
 {% block content %}
 
-<body>
-  <a href={% url "accounts:signup" %}>サインアップ</a>
-</body>
-
 <form method="post">
   {{ form.as_p }}
   {% csrf_token %}
