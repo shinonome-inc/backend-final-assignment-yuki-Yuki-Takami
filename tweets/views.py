@@ -46,11 +46,10 @@ class LikeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=self.kwargs['pk'])
         Like.objects.get_or_create(user=self.request.user, tweet=tweet)
-        is_liked = "True"
         context = {
-            "liked_count": tweet.liked_count,
+            "liked_count": tweet.like_tweet.count(),
             "tweet_id": tweet.id,
-            "is_liked": is_liked,
+            "is_liked": True,
         }
         return JsonResponse(context)
     
@@ -58,10 +57,9 @@ class UnlikeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         tweet = get_object_or_404(Tweet, pk=kwargs["pk"])
         Like.objects.filter(user=self.request.user, tweet=tweet).delete()
-        is_liked = "False"
         context = {
-            "liked_count": tweet.liked_count,
+            "liked_count": tweet.like_tweet.count(),
             "tweet_id": tweet.id,
-            "is_liked": is_liked,
+            "is_liked": False,
         }
         return JsonResponse(context)

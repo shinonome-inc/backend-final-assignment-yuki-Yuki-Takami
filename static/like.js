@@ -11,9 +11,9 @@ const getCookie = (name) => {
 const csrftoken = getCookie('csrftoken');
 
 
-const likeAction = async (tweet) => {
-
+const like = async (tweet) => {
   const url = tweet.dataset.url;
+  console.log(tweet)
   const data = {
     method: "POST",
     headers: {
@@ -27,12 +27,14 @@ const likeAction = async (tweet) => {
 }
 
 const changeStyle = (tweet_data, selector) => {
-  const count = document.querySelector(`[name="count_${tweet_data.tweet_id}"]`)
+  const count = document.querySelector(`#count_${tweet_data.tweet_id}`)
+  console.log(count)
 
   if (tweet_data.is_liked) {
     unlike_url = `/tweets/${tweet_data.tweet_id}/unlike/`
     selector.setAttribute('data-url', unlike_url);
     selector.innerHTML = "いいね解除";
+    console.log(tweet_data.liked_count)
     count.innerHTML = tweet_data.liked_count;
   } else {
     like_url = `/tweets/${tweet_data.tweet_id}/like/`
