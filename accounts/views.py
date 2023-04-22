@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tweets.models import Tweet, Like
+from tweets.models import Like, Tweet
 
 from .forms import SignUpForm
 from .models import FriendShip
