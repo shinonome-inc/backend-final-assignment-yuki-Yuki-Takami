@@ -16,7 +16,7 @@
     {% include 'tweets/like.html' %}
     <a href="{% url 'tweets:detail' tweet.pk %}">詳細</a>
   </div>
-  <script src="{% static 'like.js' %}"></script>
+  {% endfor %}
 </body>
-{% endfor %}
+<script src="{% static 'like.js' %}"></script>
 {% endblock %}
