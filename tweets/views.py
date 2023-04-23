@@ -16,6 +16,11 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = "tweet_list"
     queryset = Tweet.objects.select_related("user").all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["liked_list"] = Like.objects.filter(user=self.request.user).values_list("tweet", flat=True)
+        return context
+
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
     model = Tweet
