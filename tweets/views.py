@@ -1,15 +1,14 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import CreateView, DeleteView, DetailView, ListView
+from django.views import View, generic
 
 from .forms import TweetForm
 from .models import Like, Tweet
 
 
-class HomeView(LoginRequiredMixin, ListView):
+class HomeView(LoginRequiredMixin, generic.ListView):
     model = Tweet
     template_name = "tweets/home.html"
     ordering = "created_at"
@@ -22,7 +21,7 @@ class HomeView(LoginRequiredMixin, ListView):
         return context
 
 
-class TweetCreateView(LoginRequiredMixin, CreateView):
+class TweetCreateView(LoginRequiredMixin, generic.CreateView):
     model = Tweet
     template_name = "tweets/create.html"
     form_class = TweetForm
@@ -33,7 +32,7 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class TweetDetailView(LoginRequiredMixin, DetailView):
+class TweetDetailView(LoginRequiredMixin, generic.DetailView):
     model = Tweet
     template_name = "tweets/detail.html"
 
@@ -43,7 +42,7 @@ class TweetDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class TweetDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Tweet
     template_name = "tweets/delete.html"
     success_url = reverse_lazy("tweets:home")

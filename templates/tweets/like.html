@@ -7,4 +7,4 @@
         data-url="{% url 'tweets:like' tweet.id %}">いいね</button>
 {% endif %}
 
-<div id="count_{{tweet.id}}">{{tweet.liked_count}}</div>
+<div id="count_{{tweet.id}}">いいね数 {{tweet.like_tweet.count}}</div>
