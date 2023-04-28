@@ -35,11 +35,11 @@ const changeStyle = (tweet_data, selector) => {
     selector.setAttribute('data-url', unlike_url);
     selector.innerHTML = "いいね解除";
     console.log(tweet_data.liked_count)
-    count.innerHTML = "いいね数 ${tweet_data.liked_count}";
+    count.innerHTML = `いいね数 ${tweet_data.liked_count}`;
   } else {
     like_url = `/tweets/${tweet_data.tweet_id}/like/`
     selector.setAttribute('data-url', like_url);
     selector.innerHTML = "いいね";
-    count.innerHTML = "いいね数 ${tweet_data.liked_count}";
+    count.innerHTML = `いいね数 ${tweet_data.liked_count}`;
   }
 }
