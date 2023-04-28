@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -42,7 +42,7 @@ class TweetDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-class TweetDeleteView(LoginRequiredMixin, generic.DeleteView):
+class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Tweet
     template_name = "tweets/delete.html"
     success_url = reverse_lazy("tweets:home")

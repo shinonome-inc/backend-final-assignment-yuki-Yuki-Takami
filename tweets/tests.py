@@ -115,8 +115,8 @@ class TestTweetDeleteView(TestCase):
 
     def test_failure_post_with_incorrect_user(self):
         response = self.client.post(reverse("tweets:delete", kwargs={"pk": self.tweet2.pk}))
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Tweet.objects.count(), 1)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Tweet.objects.count(), 2)
 
 
 class TestFavoriteView(TestCase):
