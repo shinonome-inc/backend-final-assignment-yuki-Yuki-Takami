@@ -1,4 +1,5 @@
 {% extends "base.html" %} {% block content %}
+{% load static %}
 
 <div class="card card-profile my-5 mx-auto">
   <div class="card-body">
@@ -33,6 +34,10 @@
   <p>作成日時 : {{ tweet.created_at }}</p>
   <p>内容 : {{ tweet.content }}</p>
   <a href="{% url 'tweets:detail' tweet.pk %}">詳細</a>
+  <br>
+  {% include 'tweets/like.html' %}
+  <br>
 </div>
+<script src="{% static 'like.js' %}"></script>
 {% endfor %}
 {% endblock %}

@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}詳細ページ{% endblock %}
 
 {% block content %}
 <div>
-  <p>投稿者 : <a href="{% url 'accounts:user_profile' tweet.user.username %}">{{ tweet.user }}</a></p>
-  <p>内容 : {{ tweet.content }}</p>
+  <p>投稿者: <a href="{% url 'accounts:user_profile' tweet.user.username %}">{{ tweet.user }}</a></p>
+  <p>内容: {{ tweet.content }}</p>
+  {% include 'tweets/like.html' %}
 </div>
 {% if tweet.user == request.user %}
-<a href="{% url 'tweets:delete' tweet.pk %}"><button type="button">削除</button></a>
+<form action="{% url 'tweets:delete' tweet.pk %}" method="post">
+  {% csrf_token %}
+  <button type="submit">削除</button>
 </form>
 {% endif %}
+<script src="{% static 'like.js' %}"></script>
 {% endblock %}

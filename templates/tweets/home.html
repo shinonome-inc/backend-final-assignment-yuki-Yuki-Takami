@@ -1,16 +1,22 @@
-{% extends "base.html" %} ← base.htmlを継承
+{% extends "base.html" %}
+{% load static %}
 
-{% block title %}Home{% endblock %} ← titleを入れる
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Homeです。</h1>
-<p><a href="{% url 'tweets:create' %}"><button type="button">ツイート作成</button></a></p>
-{% for tweet in tweet_list %}
-<div>
-  <p>投稿者 : {{ tweet.user }}</p>
-  <p>作成日時: {{ tweet.created_at }}</p>
-  <p>内容 : {{ tweet.content }}</p>
-  <a href="{% url 'tweets:detail' tweet.pk %}">詳細</a>
-</div>
-{% endfor %}
+
+<body>
+  <h1>Homeです。</h1>
+  <p><a href="{% url 'tweets:create' %}"><button type="button">ツイート作成</button></a></p>
+  {% for tweet in tweet_list %}
+  <div>
+    <p>投稿者 : {{ tweet.user }}</p>
+    <p>作成日時: {{ tweet.created_at }}</p>
+    <p>内容 : {{ tweet.content }}</p>
+    {% include 'tweets/like.html' %}
+    <a href="{% url 'tweets:detail' tweet.pk %}">詳細</a>
+  </div>
+  {% endfor %}
+</body>
+<script src="{% static 'like.js' %}"></script>
 {% endblock %}
